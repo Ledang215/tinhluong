@@ -1,30 +1,63 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Tính lương đơn giản</title>
+    <title>Tính lương nâng cao</title>
 </head>
 <body>
-    <h2>Tính lương</h2>
+    <h2>Tính lương theo tháng</h2>
 
     <label>Lương cơ bản:</label>
     <input type="number" id="luong"><br><br>
 
-    <label>Số ngày công:</label>
+    <label>Chọn tháng:</label>
+    <input type="month" id="thang"><br><br>
+
+    <label>Số ngày công thực tế:</label>
     <input type="number" id="ngay"><br><br>
 
     <button onclick="tinhLuong()">Tính</button>
 
     <h3 id="ketqua"></h3>
+    <p id="songaycong"></p>
 
     <script>
+        function tinhNgayCong(thangInput) {
+            let [year, month] = thangInput.split("-");
+            month = parseInt(month) - 1;
+
+            let date = new Date(year, month, 1);
+            let count = 0;
+
+            while (date.getMonth() === month) {
+                let day = date.getDay();
+                if (day !== 0) { // bỏ Chủ nhật
+                    count++;
+                }
+                date.setDate(date.getDate() + 1);
+            }
+
+            return count;
+        }
+
         function tinhLuong() {
             let luong = document.getElementById("luong").value;
+            let thang = document.getElementById("thang").value;
             let ngay = document.getElementById("ngay").value;
 
-            let tong = (luong / 26) * ngay;
+            if (!thang) {
+                alert("Vui lòng chọn tháng");
+                return;
+            }
+
+            let ngayCongThang = tinhNgayCong(thang);
+
+            let tong = (luong / ngayCongThang) * ngay;
 
             document.getElementById("ketqua").innerText =
-                "Lương: " + tong.toLocaleString() + " VNĐ";
+                "Lương: " + Math.round(tong).toLocaleString() + " VNĐ";
+
+            document.getElementById("songaycong").innerText =
+                "Số ngày công tháng này (đã bỏ CN): " + ngayCongThang;
         }
     </script>
 </body>
